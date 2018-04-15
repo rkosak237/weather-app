@@ -1,0 +1,66 @@
+html {
+    font-size: 16px;
+
+    @media (min-width: 800px) {
+        font-size: 24px;
+    }
+    @media (min-width: 1200px) {
+        font-size: 28px;
+    }
+}
+
+body {
+    width: 100%;
+    height: 100vh;
+    color: white;
+    background-color: #34495e;
+    display: flex;
+
+    p {text-align: center;}
+}
+
+section {
+    width: 100%;
+
+    .content-container {
+        margin-top: 50px;
+
+        .content-container__icon {
+
+            canvas {
+                display: block;
+                margin: 0 auto;
+            }
+        }
+
+        .content-container--text {
+            height: 7.7rem;
+            margin-bottom: 3rem;
+
+            .city {font-size: 1.5rem;}
+            .weatherStatus {
+                font-size: 2rem;
+                margin-bottom: 1rem;
+            }
+            .text-container--text__information {height: 2rem;}
+        }
+
+        .content--btn-container {
+
+            button {
+                background-color: #2ecc71;
+                color: white;
+                font-size: 2rem;
+                display: block;
+                border-radius: 25px;
+                height: 2.4rem;
+            }
+        }
+    }
+
+    .Fah-temp {display: none; }
+    .Cel-temp {display: none;}
+    .tempInFah {font-size: 3.5rem;}
+    .tempInCel {font-size: 3.5rem;}
+    .active-temp {display: block;}
+}
