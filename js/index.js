@@ -1,61 +1,50 @@
 (function() {
-    // // api wundrground 47936f4090cb92c6
-
-    function getLocation() {
-        navigator.geolocation ? navigator.geolocation.getCurrentPosition(showPosition) : alert("Geolocation is not supported by this browser.");
-    }
-    getLocation();
-
-
-    //get lat, lon - pass to getLocaion
-    function showPosition(position) {
-        getWeather(position.coords.latitude, position.coords.longitude); // depending on location 
-    }
-
-    function getWeather(lat, lon) {
-        const url = "https://fcc-weather-api.glitch.me/api/current?lat=" + lat + "&lon=" + lon;
+   function getWeather() {
+       const wundergroundApiKey = '47936f4090cb92c6';
+       const url = "https://api.wunderground.com/api/" + wundergroundApiKey + "/conditions/forecast/geolookup/q/autoip.json"
         let request = new XMLHttpRequest();
         request.open('GET', url, true);
-
         //load data
         request.onload = function() {
             if (request.status >= 200 && request.status < 400) {
                 // Success!
                 const result = JSON.parse(request.response);
-
+              console.log(result);
+              console.log(result.location.city);
                 //stored all used informations
-                const fetchedData = {
-                    skyCondition: result.weather[0].description,
-                    country: result.sys.country,
-                    cityName: result.name,
-                    dataTime: result.dt,
-                    sunRise: result.sys.sunrise,
-                    sunSet: result.sys.sunset,
-                    temp: result.main.temp,
-                    weatherId: result.weather[0].id
+              const fetchedData = {
+                    skyCondition: result.current_observation.weather,
+                    country: result.location.country,
+                    cityName: result.location.city,
+                    temp: result.current_observation.temp_c,
+                    weatherId: result.current_observation.icon
                 }
-
                 //animated icons, display connected with current status of sky and day/night time
                 function animatedIcons() {
                     const mappedIcons = new Map()
                         .set(2, '<canvas id="rain" width="128" height="128"></canvas>')
-                        .set(3, '<canvas id="clear-day" width="128" height="128"></canvas>')
-                        .set(5, '<canvas id="rain" width="128" height="128"></canvas>')
-                        .set(6, '<canvas id="snow" width="128" height="128"></canvas>')
-                        .set(7, '<canvas id="fog" width="128" height="128"></canvas>')
-                        .set(8, '<canvas id="clear-day" width="128" height="128"></canvas>')
+                        .set('clear', '<canvas id="clear-day" width="128" height="128"></canvas>')
+                        .set('rain', '<canvas id="rain" width="128" height="128"></canvas>')
+                        .set('snow', '<canvas id="snow" width="128" height="128"></canvas>')
+                        .set('partlycloudy', '<canvas id="partly-cloudy-day" width="128" height="128"></canvas>')
+                        .set('cloudy', '<canvas id="cloudy" width="128" height="128"></canvas>')
+                        .set('fog', '<canvas id="fog" width="128" height="128"></canvas>')
+                        .set('clear', '<canvas id="clear-day" width="128" height="128"></canvas>')
                         .set('night', '<canvas id="clear-night" width="128" height="128"></canvas>');
 
                     const iconContainerId = document.getElementById("iconContainerId");
-                    const weatherIcon = Math.round(fetchedData.weatherId / 100);
+                    //const weatherIcon = Math.round(fetchedData.weatherId / 100);
+                    
 
                     //Check if its day - show current weather, if its night show moon 
-                    function chosingIcon(e) {
-                        return fetchedData.dataTime > fetchedData.sunRise && fetchedData.dataTime < fetchedData.sunSet ? e : 'night';
+                    function isItNight(e) {
+                      const showHour = (new Date()).getHours();
+                      console.log(showHour);
+                        return showHour >= 7 && showHour < 22 ? e : 'night';
                     }
 
                     //show animated icon in DOM
-                    iconContainerId.innerHTML = mappedIcons.get(chosingIcon(weatherIcon));
+                    iconContainerId.innerHTML = mappedIcons.get(isItNight(fetchedData.weatherId));
 
                     //animated icons 
                     const icons = new Skycons({ "color": "white" });
@@ -71,7 +60,7 @@
                     icons.set("fog", Skycons.FOG);
                     icons.play();
                 }
-                animatedIcons();
+               animatedIcons();
 
                 function celToFah(celsius) {
                     let celTemp = celsius;
@@ -93,6 +82,7 @@
         };
         request.send();
     }
+ getWeather();
     const temperature = document.getElementById("getGeo");
     temperature.addEventListener('click', switchTemps);
 
